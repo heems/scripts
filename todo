@@ -21,16 +21,15 @@ print_todo()
 }
 
 delete_todo(){
-	#idk
 	shift
-	echo "$@"
+	echo "Deleting entries:"
+	grep $@ "$TODO"
 	sed -i /$@/d "$TODO"
 }
 
 if [[ $# < "1" ]]; then
 	print_todo
 elif [[ $1 == "-d" ]]; then
-	echo "deleting"
 	delete_todo $@
 else
 	echo "$@" >> "$TODO"
