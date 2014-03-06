@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#todo.sh
+#todo list manager in bash
+
+if [ ! -f "~/.todo.txt" ]; then
+	touch ~/todo.txt
+	chmod 755 ~/todo.txt
+fi
+
+TODO=~/todo.txt
+
+print_todo()
+{
+	counter="1"
+	while read line
+	do
+		echo "$counter. $line"
+		let "counter += 1"
+	done < $TODO
+}
+
+delete_todo(){
+	#idk
+	shift
+	echo "$@"
+	sed -i /$@/d "$TODO"
+}
+
+if [[ $# < "1" ]]; then
+	print_todo
+elif [[ $1 == "-d" ]]; then
+	echo "deleting"
+	delete_todo $@
+else
+	echo "$@" >> "$TODO"
+fi

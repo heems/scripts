@@ -1,0 +1,49 @@
+#!/usr/bin/env python  
+
+import os
+import json
+import pprint
+import glob
+import re
+
+possible_files = []
+data = {}
+urls = []
+
+
+def vundle(url):
+	homepath = os.path.expanduser("~")
+	vimrc = open(homepath + "/.vimrc", 'r+')
+	content = vimrc.readlines()
+	for i in range(len(content)):
+		if "Bundle 'gmarik/vundle'" in content[i]:
+			content[i] += "\nBundle '" + url + "'\n"
+	vimrc.seek(0)
+	vimrc.truncate()
+	vimrc.write(''.join(content))
+	vimrc.close()
+	
+#get all possible sessionstore.js files
+for file in glob.glob("/home/karthik/.mozilla/firefox/*default/sessionstore.js"):
+	with open(file, 'r') as f:
+		possible_files.append(f)
+
+#get most recent sessionstore.js
+mtime = lambda f: os.stat(f.name).st_mtime
+session_file = list(sorted(possible_files, key=mtime))[-1]
+
+#reopen session_file
+session_file = open(session_file.name, 'r')
+data = json.loads(session_file.read())
+
+#get open tabs from sessionstore.js
+for win in data.get("windows"):
+	for tab in win.get("tabs"):
+		i = tab.get("index") - 1
+		urls.append(tab.get("entries")[i].get("url"))
+
+for url in urls:
+	if re.search("github.com/.+/[a-zA-Z0-9_-]+/?$", url):
+		bundle = url[19::]
+		print "Adding bundle " + bundle + "to .vimrc."
+		vundle(url[19::])
