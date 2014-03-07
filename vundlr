@@ -16,8 +16,13 @@ def vundle(url):
 	vimrc = open(homepath + "/.vimrc", 'r+')
 	content = vimrc.readlines()
 	for i in range(len(content)):
+		if "Bundle '" + url + "'" in content[i]:
+			print "Plugin " + url + "already exists.\n"
+			return
+	for i in range(len(content)):
 		if "Bundle 'gmarik/vundle'" in content[i]:
 			content[i] += "\nBundle '" + url + "'\n"
+			print "Adding bundle " + bundle + "to .vimrc."
 	vimrc.seek(0)
 	vimrc.truncate()
 	vimrc.write(''.join(content))
@@ -45,5 +50,4 @@ for win in data.get("windows"):
 for url in urls:
 	if re.search("github.com/.+/[-a-zA-Z0-9_.]+/?$", url):
 		bundle = url[19::]
-		print "Adding bundle " + bundle + "to .vimrc."
 		vundle(url[19::])
