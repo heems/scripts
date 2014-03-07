@@ -43,7 +43,7 @@ for win in data.get("windows"):
 		urls.append(tab.get("entries")[i].get("url"))
 
 for url in urls:
-	if re.search("github.com/.+/[a-zA-Z0-9_-]+/?$", url):
+	if re.search("github.com/.+/[-a-zA-Z0-9_.]+/?$", url):
 		bundle = url[19::]
 		print "Adding bundle " + bundle + "to .vimrc."
 		vundle(url[19::])
